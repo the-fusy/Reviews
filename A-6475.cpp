@@ -69,18 +69,12 @@ List<T>& mergeSort(List<T>& v) {
     Node<T>* it2 = sortedList2.root;
     Node<T>* now = v.root;
     while (it1 != nullptr || it2 != nullptr) {
-        if (it1 == nullptr) {
+        if (it1 == nullptr || (it2 != nullptr && it2->value < it1->value)) {
             now->value = it2->value;
             it2 = it2->next;
-        } else if (it2 == nullptr) {
-            now->value = it1->value;
-            it1 = it1->next;
-        } else if (it1->value <= it2->value) {
-            now->value = it1->value;
-            it1 = it1->next;
         } else {
-            now->value = it2->value;
-            it2 = it2->next;
+            now->value = it1->value;
+            it1 = it1->next;
         }
         now = now->next;
     }
