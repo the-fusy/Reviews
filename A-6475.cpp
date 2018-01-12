@@ -24,14 +24,15 @@ struct List {
         }
     }
 
-    List(List list, int l, int r) : root(nullptr), last(nullptr), size(0) {
+    // type == 0 -> return left half else right
+    List(List list, bool type) : root(nullptr), last(nullptr), size(0) {
+        int middle = list.size / 2;
         Node<T>* now = list.root;
         for (int i = 0; i < list.size; ++i) {
-            if (i >= r) break;
-            if (i >= l) {
-                addElement(now->value);
-            }
-            now = now->next;
+            if (i != 0) now = now->next;
+            if (!type && i >= middle) break;
+            else if (type && i < middle) continue;
+            addElement(now->value);
         }
     }
 
@@ -58,12 +59,12 @@ struct List {
 };
 
 template<typename T>
-List<T>& mergeSort(List<T>& v, int l, int r) {
-    if (r - l == 1) return v;
-    List<T> list1(v, l - l, (r + l) / 2 - l);
-    List<T> list2(v, (r + l) / 2 - l, r - l);
-    List<T> sortedList1 = mergeSort(list1, l, (r + l) / 2);
-    List<T> sortedList2 = mergeSort(list2, (r + l) / 2, r);
+List<T>& mergeSort(List<T>& v) {
+    if (v.size == 1) return v;
+    List<T> list1(v, 0);
+    List<T> list2(v, 1);
+    List<T> sortedList1 = mergeSort(list1);
+    List<T> sortedList2 = mergeSort(list2);
     Node<T>* it1 = sortedList1.root;
     Node<T>* it2 = sortedList2.root;
     Node<T>* now = v.root;
@@ -95,7 +96,7 @@ int main() {
         std::cin >> temp;
         list.addElement(temp);
     }
-    list = mergeSort(list, 0, n);
+    list = mergeSort(list);
     Node<int>* now = list.root;
     for (int i = 0; i < n; ++i) {
         std::cout << now->value << ' ';
