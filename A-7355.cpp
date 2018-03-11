@@ -1,7 +1,6 @@
-#include <vector>
 #include <list>
 #include <stdexcept>
-#include <iostream>
+#include <vector>
 
 template<class KeyType, class ValueType, class Hash = std::hash<KeyType>> 
 class HashMap {
@@ -18,17 +17,14 @@ public:
     }
     
     template<class BeginIterator, class EndIterator>
-    HashMap(BeginIterator begin, EndIterator end, Hash hasher = Hash()) {
-        *this = HashMap(hasher);
+    HashMap(BeginIterator begin, EndIterator end, Hash hasher = Hash()) : HashMap(hasher) {
         while (begin != end) {
             this->insert(*begin);
             ++begin;
         }
     }
 
-    HashMap(std::initializer_list<std::pair<KeyType, ValueType>> list, Hash hasher = Hash()) {
-        *this = HashMap(list.begin(), list.end(), hasher);
-    }
+    HashMap(std::initializer_list<std::pair<KeyType, ValueType>> list, Hash hasher = Hash()) : HashMap(list.begin(), list.end(), hasher) {}
 
     size_t size() const {
         return sizeOfTable;
@@ -105,7 +101,7 @@ public:
         size_t hash = hasher(key) % nowSize;
         auto it = hashPointers[hash].first;
         auto size = hashPointers[hash].second;
-        for (size_t i = 0; i < size; ++i) {
+        while (size--) {
             if (it->first == key) return static_cast<const_iterator>(it);
             ++it;
         }
@@ -126,9 +122,8 @@ public:
         auto it = find(key);
         if (it == end()) {
             throw std::out_of_range("");
-        } else {
-            return it->second;
         }
+        return it->second;
     }
 
     void clear() {
